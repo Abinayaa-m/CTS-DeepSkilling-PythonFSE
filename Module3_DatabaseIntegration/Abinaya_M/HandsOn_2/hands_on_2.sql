@@ -53,5 +53,23 @@ WHERE grade is NULL;
 SELECT * FROM enrollments;
 SELECT COUNT(*) FROM enrollments;
 
+-- Task 2: Single-Table Queries and Filtering
+SELECT * FROM students
+WHERE enrollment_year=2022
+ORDER BY last_name;
+
+SELECT * FROM courses
+WHERE credits > 3
+ORDER BY credits DESC;
+
+SELECT * FROM professors
+WHERE salary BETWEEN 80000 AND 95000;
+
+SELECT * FROM students
+WHERE email LIKE "%@college.edu";
+
+SELECT enrollment_year, COUNT(*) count 
+FROM students
+GROUP BY enrollment_year;
 
 
