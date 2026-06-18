@@ -72,4 +72,73 @@ SELECT enrollment_year, COUNT(*) count
 FROM students
 GROUP BY enrollment_year;
 
+-- Task 3: Multi-Table Joins
+SELECT * FROM students;
+SELECT * FROM enrollments;
+SELECT * FROM departments;
+SELECT * FROM courses;
 
+SELECT CONCAT(first_name," ",last_name)name,d.dept_name
+FROM students AS s
+JOIN departments AS d
+ON d.department_id=s.department_id;
+
+SELECT e.enrollment_id,CONCAT(s.first_name," ",s.last_name)student_name,c.course_name
+FROM enrollments AS e
+JOIN students AS s
+ON e.student_id=s.student_id
+JOIN courses AS c
+ON e.course_id=c.course_id;
+
+SHOW TABLES;
+DESC students;
+
+SELECT s.student_id, CONCAT(first_name," ",last_name) student_name
+FROM students AS s
+LEFT JOIN enrollments AS e
+ON s.student_id=e.student_id
+WHERE e.student_id IS NULL;
+
+SELECT c.course_name,COUNT(e.student_id)
+FROM courses c
+LEFT JOIN enrollments e
+ON c.course_id = e.course_id
+GROUP BY c.course_name;
+
+SELECT d.dept_name,p.prof_name,salary
+FROM departments AS d
+LEFT JOIN professors AS p
+ON d.department_id=p.department_id;
+
+-- TASK 4
+SELECT c.course_name,COUNT(e.enrollment_id)
+FROM courses AS c
+LEFT JOIN enrollments AS e
+ON c.course_id=e.course_id
+GROUP BY course_name;
+
+SELECT d.dept_name,round(avg(p.salary),2)average_salary
+FROM departments AS d
+INNER JOIN professors AS p
+ON d.department_id=p.department_id
+GROUP BY dept_name;
+
+SELECT * FROM departments
+WHERE budget>600000;
+
+SELECT e.grade,COUNT(*) AS grade_count
+FROM courses AS c 
+LEFT JOIN enrollments AS e
+ON c.course_id=e.course_id
+WHERE c.course_code='CS101'
+GROUP BY e.grade;
+
+
+SELECT d.dept_name,COUNT(DISTINCT s.student_id) AS total_students
+FROM departments d
+JOIN students s
+ON d.department_id=s.department_id
+JOIN enrollments e
+ON s.student_id=e.student_id
+GROUP BY d.department_id,d.dept_name
+HAVING COUNT(DISTINCT s.student_id)>2;
