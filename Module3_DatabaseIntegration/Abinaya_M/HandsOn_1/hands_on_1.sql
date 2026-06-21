@@ -77,12 +77,18 @@ INSERT INTO courses (course_name, course_code, credits, department_id) VALUES
   ('Thermodynamics',               'ME101', 3, 3);
   
   INSERT INTO enrollments (student_id, course_id, enrollment_date, grade) VALUES
-  (1, 1, '2022-07-01', 'A'), (1, 2, '2022-07-01', 'B'),
-  (2, 1, '2022-07-01', 'B'), (2, 3, '2022-07-01', 'A'),
-  (3, 4, '2021-07-01', 'A'), (4, 5, '2023-07-01', NULL),
-  (5, 1, '2022-07-01', 'C'), (5, 2, '2022-07-01', 'A'),
-  (6, 4, '2021-07-01', 'B'), (7, 5, '2023-07-01', NULL),
-  (8, 1, '2022-07-01', 'A'), (8, 3, '2022-07-01', 'B');
+  (1, 1, '2022-07-01', 'A'), 
+  (1, 2, '2022-07-01', 'B'),
+  (2, 1, '2022-07-01', 'B'), 
+  (2, 3, '2022-07-01', 'A'),
+  (3, 4, '2021-07-01', 'A'),
+  (4, 5, '2023-07-01', NULL),
+  (5, 1, '2022-07-01', 'C'), 
+  (5, 2, '2022-07-01', 'A'),
+  (6, 4, '2021-07-01', 'B'), 
+  (7, 5, '2023-07-01', NULL),
+  (8, 1, '2022-07-01', 'A'), 
+  (8, 3, '2022-07-01', 'B');
   
   INSERT INTO professors (prof_name, email, department_id, salary) VALUES
   ('Dr. Anand Krishnan',  'anand.k@college.edu',   1, 95000.00),
