@@ -117,4 +117,82 @@ SELECT * FROM vw_student_enrollment_summary;
 UPDATE vw_student_enrollment_summary SET enrollment_year=2023 WHERE student_id=1;
 -- ERROR GOT because the update data enrollment_year=2023 failed the condition given by WHERE clause in the view created
 
+-- Task 3
+DELIMITER $$
+CREATE PROCEDURE sp_enroll_student(IN p_student_id INT,IN p_course_id INT,IN p_enrollment_date DATE)
+BEGIN
+DECLARE v_count INT;
+SELECT COUNT(*) INTO v_count FROM enrollments WHERE student_id=p_student_id AND course_id=p_course_id;
+IF v_count>0 THEN
+  SELECT 'Student is already been enrolled in this course' AS Message;
+ELSE 
+  INSERT INTO enrollments(student_id,course_id,enrollment_date)VALUES(p_student_id,p_course_id,p_enrollment_date);
+  SELECT 'Enrollment Successful' AS Message;
+END IF ;
+END$$
+DELIMITER ;
 
+SHOW PROCEDURE STATUS
+WHERE Db='college_db';
+
+CALL sp_enroll_student(3,2,'2025-01-01');
+SELECT *FROM enrollments;
+
+
+CREATE TABLE department_transfer_log(
+    log_id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    old_department_id INT,
+    new_department_id INT,
+    transfer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER $$
+CREATE PROCEDURE sp_transfer_student(IN p_student_id INT, IN p_new_department_id INT)
+BEGIN
+DECLARE v_old_department_id INT;
+DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+  ROLLBACK;
+  SELECT 'Transfer Failed. Transaction Rolled Back.' AS Message;
+END;
+
+START TRANSACTION;
+
+SELECT department_id INTO v_old_department_id FROM students
+WHERE student_id = p_student_id;
+
+UPDATE students SET department_id = p_new_department_id WHERE student_id = p_student_id;
+
+INSERT INTO department_transfer_log(student_id, old_department_id, new_department_id)VALUES(p_student_id, v_old_department_id, p_new_department_id);
+COMMIT;
+SELECT 'Student Transfer Successful' AS Message;
+END$$
+DELIMITER ;
+
+CALL sp_transfer_student(1,2);
+SELECT * FROM department_transfer_log;
+
+SELECT student_id, department_id FROM students
+WHERE student_id = 1;
+
+CALL sp_transfer_student(1,999);
+-- ROLL BACK has happend as there is no department_id as 999 so it throwed a FOREIGN KEY error and hence the exit handler got executed and roll back occured and then exit the procedure 
+
+-- Tested transaction by attempting to transfer a student
+-- to a non-existent department (department_id = 999).
+-- The foreign key constraint caused an SQL exception.
+-- The EXIT HANDLER executed ROLLBACK.
+-- The student's original department remained unchanged.
+-- This confirms that the transaction successfully rolls back
+-- all changes when an error occurs.
+
+SELECT * FROM enrollments;
+START TRANSACTION;
+
+INSERT INTO enrollments(student_id, course_id, enrollment_date)VALUES(10, 3, CURDATE());
+SAVEPOINT sp1;
+
+INSERT INTO enrollments(student_id, course_id, enrollment_date)VALUES(3, 999, CURDATE());
+ROLLBACK TO sp1;
+COMMIT;
