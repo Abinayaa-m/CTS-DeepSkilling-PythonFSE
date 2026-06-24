@@ -1,4 +1,26 @@
-from sqlalchemy.orm import sessionmaker
+"""
+Task 3(Q90): N+1 Problem Analysis
+
+Without joinedload():
+---------------------
+1 query fetched enrollments.
+Additional queries were executed for each student
+and course record accessed through relationships.
+This resulted in the N+1 query problem.
+
+With joinedload():
+------------------
+Enrollment, Student, and Course data were loaded
+together using LEFT OUTER JOIN.
+
+Only one SQL query was executed.
+
+Result:
+- Same output
+- Fewer database round trips
+- Better performance
+"""
+from sqlalchemy.orm import sessionmaker, joinedload
 from models import (engine, Department, Student, Course, Enrollment)
 
 Session = sessionmaker(bind=engine)
@@ -77,3 +99,32 @@ enrollment = (
 )
 
 print(enrollment)
+
+
+#Q87
+# N+1 Problem Observed
+# 1 query fetched enrollments
+# Additional queries fetched students and courses
+# Total queries increased with number of enrollments
+
+#Q88
+enrollments = (session.query(Enrollment).options(joinedload(Enrollment.student),joinedload(Enrollment.course)).all())
+
+#Q89
+# Query Count After joinedload()
+
+# SQLAlchemy executed only 1 SQL query.
+# The query used LEFT OUTER JOIN to fetch:
+# 1. Enrollment data
+# 2. Student data
+# 3. Course data
+# Therefore the N+1 problem was eliminated.
+
+#Q90
+# Django ORM equivalent of SQLAlchemy joinedload()
+"""
+enrollments = Enrollment.objects.select_related(
+    'student',
+    'course'
+).all()
+"""
