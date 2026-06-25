@@ -1,0 +1,169 @@
+Q92:
+Initialized Alembic in the HandsOn_7 project.
+
+Command used:
+alembic init migrations
+
+Result:
+- Created alembic.ini
+- Created migrations folder
+- Created versions folder
+- Created env.py configuration file
+
+
+
+
+Q93:
+Configured Alembic database connection.
+
+Approach:
+- Loaded database credentials from .env
+- Built DATABASE_URL dynamically
+- Used config.set_main_option() to set sqlalchemy.url
+
+Reason:
+Avoid hardcoding database credentials in alembic.ini.
+
+
+
+Q94:
+Connected Alembic to SQLAlchemy models.
+
+Changes:
+- Imported Base from models.py
+- Set target_metadata = Base.metadata
+
+Purpose:
+Allows Alembic to detect ORM tables and generate migrations automatically.
+
+
+
+Q95:
+Generated baseline migration.
+
+Command used:
+alembic revision --autogenerate -m "initial schema"
+
+Purpose:
+Compared ORM models with database schema and generated migration file automatically.
+
+
+
+Q96
+Verified the generated migration file.
+
+The file contains:
+- upgrade() function to apply schema changes.
+- downgrade() function to rollback schema changes.
+
+Alembic generated create_table operations for the ORM models and corresponding drop_table operations for rollback.
+
+
+
+Q97
+Executed:
+
+alembic upgrade head
+
+Migration was successfully applied to the college_db_orm database.
+
+Verified that:
+- All ORM tables exist.
+- alembic_version table was created.
+- The current revision is recorded in alembic_version.
+
+
+
+Q100
+Inspected the generated migration file created by Alembic.
+
+Verified:
+- upgrade() function contains op.add_column() to add the
+  'is_active' column to the students table.
+- downgrade() function contains op.drop_column() to remove the
+  'is_active' column from the students table.
+
+Purpose:
+upgrade() applies the schema change,
+downgrade() rolls back the schema change if needed.
+
+Observation:
+Alembic correctly detected the new column added to the
+Student ORM model and generated the corresponding migration code.
+
+
+Q103 OUTPUT:
+
+Rev: 53a6d023c1fa (head)
+Parent: dc205c58870f
+
+create course_schedule table
+    
+    Revision ID: 53a6d023c1fa
+    Revises: dc205c58870f
+    Create Date: 2026-06-24 23:03:31.523585
+
+Rev: dc205c58870f
+Parent: 74d6c97dc019
+
+add is_active to students
+    
+    Revision ID: dc205c58870f
+    Revises: 74d6c97dc019
+    Create Date: 2026-06-24 22:51:43.273460
+
+Rev: 74d6c97dc019
+Parent: <base>
+
+initial schema
+    
+    Revision ID: 74d6c97dc019
+    Revises: 
+    Create Date: 2026-06-24 22:21:01.439486
+
+Q104:
+Executed: alembic current
+Verified the current migration revision hash.
+The database is currently at the latest migration (head).
+
+
+
+Q105:
+Executed: alembic downgrade -1
+
+Rolled back the most recent migration.
+Verified that the schema change introduced in the latest migration
+was successfully reverted.
+
+
+
+Q106:
+Executed: alembic downgrade base
+
+Rolled back all applied migrations.
+Database schema returned to its initial state.
+
+
+Q107:
+Executed: alembic upgrade head
+
+Re-applied all migrations.
+Verified:
+- All tables recreated
+- is_active column restored
+- Database returned to latest schema version
+
+
+Q108:(Bonus)
+Django Migration Commands
+
+Create migration:
+python manage.py makemigrations
+
+Apply migration:
+python manage.py migrate
+
+Rollback:
+python manage.py migrate <app_name> <migration_number>
+
+Django's migration system provides functionality similar to Alembic.
