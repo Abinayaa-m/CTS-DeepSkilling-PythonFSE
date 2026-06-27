@@ -82,4 +82,25 @@ JOIN courses_department
 ON courses_course.department_id = courses_department.id
 WHERE courses_department.name = 'Computer Science';
 
+
+Task 3 
+Question 21
+
+Command Used:
+    python manage.py createsuperuser
+
+Purpose:
+- Creates an administrator account (superuser) for the Django project.
+- The superuser has full access to the Django Admin interface.
+
+Credentials Used:
+    Username : admin
+    Email    : admin@college.edu
+    Password : Admin@123
+
+Explanation:
+- The superuser credentials are stored in the auth_user table.
+- Django securely hashes the password before storing it in the database.
+- The superuser can log in to the Django Admin interface to manage application data.
+
 """
